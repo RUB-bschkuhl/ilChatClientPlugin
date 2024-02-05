@@ -1,0 +1,10 @@
+//
+// Copyright (c) 2024 Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
+// GPLv3, see LICENSE
+//
+// Author: Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
+//
+<!-- language file start -->
+cmd_insert#:#Insert Test Component
+content_plugin_version#:#Content last edited with version
+edit_input_field#:#Edit Test Component
