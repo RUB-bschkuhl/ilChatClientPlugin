@@ -1,9 +1,9 @@
 <?php
 /**
- * Copyright (c) 2017 Fred Neumann <fred.neumann@gmx.de>
+ * Copyright (c) 2024 Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de> 
  * GPLv3, see LICENSE
  *
- * @author Fred Neumann <fred.neumann@gmx.de>
+ * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
 
 // alphanumerical ID of the plugin; never change this
