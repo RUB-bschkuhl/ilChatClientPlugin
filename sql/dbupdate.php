@@ -3,13 +3,13 @@
 /* Copyright (c) 1998-2017 ILIAS open source, Extended GPL, see docs/LICENSE  */
 
 /**
- * Test Page Component  plugin: database update script
+ * External Chat Page Component  plugin: database update script 
  */ 
 
 /**
  * Additional values
  */
-if(!$ilDB->tableExists('exccp_data'))
+if(!$ilDB->tableExists('excpc_data'))
 {
     $fields = array(
         'id' => array(
@@ -25,8 +25,8 @@ if(!$ilDB->tableExists('exccp_data'))
             'notnull' => false,
         ),
     );
-    $ilDB->createTable('exccp_data', $fields);
-    $ilDB->addPrimaryKey('exccp_data', array('id'));
-    $ilDB->createSequence('exccp_data');
+    $ilDB->createTable('excpc_data', $fields);
+    $ilDB->addPrimaryKey('excpc_data', array('id'));
+    $ilDB->createSequence('excpc_data');
 }
 ?>

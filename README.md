@@ -1,8 +1,7 @@
-Copyright (c) 2017 Fred Neumann <fred.neumann@gmx.de>
+Copyright (c) 2024 Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
 GPLv3, see LICENSE
 
-Author: Fred Neumann <fred.neumann@gmx.de>
-
+Author: Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
 
 INSTALLATION
 ------------
@@ -12,7 +11,7 @@ This is an example plugin with minimal features for the ILIAS PageComponent Plug
 ```
 mkdir -p Customizing/global/plugins/Services/COPage/PageComponent
 cd Customizing/global/plugins/Services/COPage/PageComponent
-git clone https://github.com/ILIAS-eLearning/TestPageComponent.git
+git clone https://github.com/ILIAS-eLearning/ExtChatPageComponent.git 
 ```
 
 ### Branching

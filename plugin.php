@@ -18,7 +18,7 @@ $ilias_min_version = "8.0.0";
 $ilias_max_version = "8.999";
 
 // optional, but useful: Add one or more responsible persons and a contact email
-$responsible = "Bastian Schmidt-Kuhl";
+$responsible = "Bastian Schmidt-Kuhl"; 
 $responsible_mail = "bastian.schmidt-kuhl@ruhr-uni-bochum.de";
 
 // this plugin has an own exporter class
