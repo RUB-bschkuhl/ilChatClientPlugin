@@ -17,10 +17,10 @@
  *********************************************************************/
 
 /**
- * Exporter class for the TestPageComponent Plugin
+ * Exporter class for the ExtChatPageComponent Plugin
  * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
-class ilTestPageComponentExporter extends ilPageComponentPluginExporter
+class ilExtChatPageComponentExporter extends ilPageComponentPluginExporter
 {
     public function init() : void
     {
@@ -72,7 +72,7 @@ class ilTestPageComponentExporter extends ilPageComponentPluginExporter
         /** @var ilComponentFactory $component_factory */
         $component_factory = $DIC["component.factory"];
 
-        /** @var ilTestPageComponentPlugin $plugin */
+        /** @var ilExtChatPageComponentPlugin $plugin */
         $plugin = $component_factory->getPlugin("excpc");
 
         $properties = self::getPCProperties($a_id);

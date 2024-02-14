@@ -18,9 +18,9 @@
 
 /**
  * External Chat Page Component plugin
- * @author Fred Neumann <fred.neumann@gmx.de>
+ * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
-class ilTestPageComponentPlugin extends ilPageComponentPlugin
+class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 {
     /**
      * Get plugin name
@@ -28,7 +28,12 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
      */
     public function getPluginName() : string
     {
-        return "TestPageComponent";
+        return "ExtChatPageComponent";
+    }
+
+    public function getTemplate(string $a_template, bool $a_par1 = true, bool $a_par2 = true): ilTemplate
+    {
+        return new ilTemplate($this->getDirectory() . "/dist/src/" . $a_template, $a_par1, $a_par2);
     }
 
     /**
@@ -36,9 +41,29 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
      */
     public function isValidParentType(string $a_parent_type) : bool
     {
-        // test with all parent types
-        return true;
+        // only available in content page
+        if(in_array($a_parent_type, array("copa"))){
+            return true;
+        }
+        return false;
     }
+ 
+	/**
+	 * Get Javascript files regardless of output mode
+	 */
+	public function getJavascriptFiles(string $a_mode): array
+	{
+		return array("src/extchatpc.js");
+	}
+ 
+	/**
+	 * Get css files regardless of output mode
+	 */
+	public function getCssFiles(string $a_mode): array
+	{
+		return array("src/extchatpc.css");
+	}
+ 
 
     /**
      * Handle an event
@@ -144,7 +169,7 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
         global $DIC;
         $db = $DIC->database();
 
-        $query = "SELECT data FROM pctcp_data WHERE id = " . $db->quote($id, 'integer');
+        $query = "SELECT data FROM excpc_data WHERE id = " . $db->quote($id, 'integer');
         $result = $db->query($query);
         if ($row = $db->fetchAssoc($result)) {
             return $row['data'];
@@ -160,9 +185,9 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
         global $DIC;
         $db = $DIC->database();
 
-        $id = $db->nextId('pctcp_data');
+        $id = $db->nextId('excpc_data');
         $db->insert(
-            'pctcp_data',
+            'excpc_data',
             array(
                 'id' => array('integer', $id),
                 'data' => array('text', $data)
@@ -180,7 +205,7 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
         $db = $DIC->database();
 
         $db->update(
-            'pctcp_data',
+            'excpc_data',
             array(
                 'data' => array('text', $data)
             ),
@@ -198,7 +223,7 @@ class ilTestPageComponentPlugin extends ilPageComponentPlugin
         global $DIC;
         $db = $DIC->database();
 
-        $query = "DELETE FROM pctcp_data WHERE ID = " . $db->quote($id, 'integer');
+        $query = "DELETE FROM excpc_data WHERE ID = " . $db->quote($id, 'integer');
         $db->manipulate($query);
     }
 }

@@ -18,11 +18,11 @@
 
 /**
  * External Chat Page Component GUI
- * @author            Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
- * @ilCtrl_isCalledBy ilTestPageComponentPluginGUI: ilPCPluggedGUI
- * @ilCtrl_isCalledBy ilTestPageComponentPluginGUI: ilUIPluginRouterGUI
+ * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
+ * @ilCtrl_isCalledBy ilExtChatPageComponentPluginGUI: ilPCPluggedGUI
+ * @ilCtrl_isCalledBy ilExtChatPageComponentPluginGUI: ilUIPluginRouterGUI
  */
-class ilTestPageComponentPluginGUI extends ilPageComponentPluginGUI
+class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
 {
     protected ilLanguage $lng;
     protected ilCtrl $ctrl;
@@ -128,6 +128,38 @@ class ilTestPageComponentPluginGUI extends ilPageComponentPluginGUI
         $data->setMaxLength(40);
         $data->setSize(40);
         $form->addItem($data);
+        // page value
+        $page_value = new ilTextInputGUI('page_value', 'page_value');
+        $page_value->setMaxLength(40);
+        $page_value->setSize(40);
+        $page_value->setRequired(true);
+        $form->addItem($page_value);
+
+        // page file
+        $page_file = new ilFileInputGUI('page_file', 'page_file');
+        $page_file->setALlowDeletion(true);
+        $form->addItem($page_file);
+
+        // additional data
+        $data = new ilTextInputGUI('additional_data', 'additional_data');
+        $data->setMaxLength(40);
+        $data->setSize(40);
+        $form->addItem($data);
+
+        // page value
+        $page_value = new ilTextInputGUI('interact_url', 'interact_url');
+        $page_value->setMaxLength(40);
+        $page_value->setSize(40);
+        $page_value->setRequired(true);
+        $form->addItem($page_value);
+
+        // page file
+        $page_file = new ilFileInputGUI('upload_url', 'upload_url');
+        $page_value->setMaxLength(40);
+        $page_value->setSize(40);
+        $page_value->setRequired(true);
+        $form->addItem($page_value);
+
 
         // page info values
         foreach ($this->getPageInfo() as $key => $value) {
@@ -223,46 +255,52 @@ class ilTestPageComponentPluginGUI extends ilPageComponentPluginGUI
      */
     public function getElementHTML(string $a_mode, array $a_properties, string $a_plugin_version) : string
     {
+        $pl = $this->getPlugin();
+
         $display = array_merge($a_properties, $this->getPageInfo());
 
+
+//TODO ggf Vite Template anpassen, dann kopieren von Inhalten aus Moodle Plugin
+        $html = $this->getPlugin()->getTemplate('/dist/src/chat.html', false, false);
+
         // show properties stores in the page
-        $html = '<pre>' . print_r($display, true);
+        // $html = '<pre>' . print_r($display, true);
 
-        // show additional data
-        if (!empty($a_properties['additional_data_id'])) {
-            $data = $this->plugin->getData($a_properties['additional_data_id']);
-            $html .= 'Data: ' . $data . "\n";
-        }
+        // // show additional data
+        // if (!empty($a_properties['additional_data_id'])) {
+        //     $data = $pl->getData($a_properties['additional_data_id']);
+        //     $html .= 'Data: ' . $data . "\n";
+        // }
 
-        // show uploaded file
-        if (!empty($a_properties['page_file'])) {
-            try {
-                $fileObj = new ilObjFile($a_properties['page_file'], false);
+        // // show uploaded file
+        // if (!empty($a_properties['page_file'])) {
+        //     try {
+        //         $fileObj = new ilObjFile($a_properties['page_file'], false);
 
-                // security
-                $_SESSION[__CLASS__]['allowedFiles'][$fileObj->getId()] = true;
+        //         // security
+        //         $_SESSION[__CLASS__]['allowedFiles'][$fileObj->getId()] = true;
 
-                $this->ctrl->setParameter($this, 'id', $fileObj->getId());
-                $url = $this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilTestPageComponentPluginGUI'),
-                    'downloadFile');
-                $title = $fileObj->getPresentationTitle();
+        //         $this->ctrl->setParameter($this, 'id', $fileObj->getId());
+        //         $url = $this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilExtChatPageComponentPluginGUI'),
+        //             'downloadFile');
+        //         $title = $fileObj->getPresentationTitle();
 
-            } catch (Exception $e) {
-                $url = "";
-                $title = $e->getMessage();
-            }
+        //     } catch (Exception $e) {
+        //         $url = "";
+        //         $title = $e->getMessage();
+        //     }
 
-            $html .= 'File: <a href="' . $url . '">' . $title . '</a>' . "\n";
-        }
+        //     $html .= 'File: <a href="' . $url . '">' . $title . '</a>' . "\n";
+        // }
 
-        // Show listened event
-        if ($event = ($_SESSION['excpc_listened_event'] ?? null)) {
-            $html .= "\n";
-            $html .= 'Last Auth Event: ' . ilDatePresentation::formatDate(new ilDateTime($event['time'], IL_CAL_UNIX));
-            $html .= ' ' . $event['event'];
-        }
+        // // Show listened event
+        // if ($event = ($_SESSION['excpc_listened_event'] ?? null)) {
+        //     $html .= "\n";
+        //     $html .= 'Last Auth Event: ' . ilDatePresentation::formatDate(new ilDateTime($event['time'], IL_CAL_UNIX));
+        //     $html .= ' ' . $event['event'];
+        // }
 
-        $html .= '</pre>';
+        // $html .= '</pre>';
 
         return $html;
     }
