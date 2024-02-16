@@ -31,10 +31,14 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
         return "ExtChatPageComponent";
     }
 
-    public function getTemplate(string $a_template, bool $a_par1 = true, bool $a_par2 = true): ilTemplate
-    {
-        return new ilTemplate($this->getDirectory() . "/dist/src/" . $a_template, $a_par1, $a_par2);
-    }
+    // public function getTemplate(string $a_template, bool $a_par1 = true, bool $a_par2 = true): string
+    // {
+    //     $tpl = new ilTemplate($this->getDirectory() . "/dist/src/" . $a_template, $a_par1, $a_par2);
+    //     $tpl->setVariable("CHAT_ID", "1234");
+
+    //     $tpl->parseCurrentBlock();
+    //     return $tpl->get();
+    // }
 
     /**
      * Check if parent type is valid
@@ -53,7 +57,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 	 */
 	public function getJavascriptFiles(string $a_mode): array
 	{
-		return array("src/extchatpc.js");
+		return array("app/assets/main.js");
 	}
  
 	/**
@@ -61,7 +65,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 	 */
 	public function getCssFiles(string $a_mode): array
 	{
-		return array("src/extchatpc.css");
+		return array("app/assets/main.css");
 	}
  
 

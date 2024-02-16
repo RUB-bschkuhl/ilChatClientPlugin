@@ -42,7 +42,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
     /**
      * Execute command
      */
-    public function executeCommand() : void
+    public function executeCommand(): void
     {
         $next_class = $this->ctrl->getNextClass();
 
@@ -60,7 +60,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
     /**
      * Create
      */
-    public function insert() : void
+    public function insert(): void
     {
         $form = $this->initForm(true);
         $this->tpl->setContent($form->getHTML());
@@ -69,13 +69,11 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
     /**
      * Save new pc example element
      */
-    public function create() : void
+    public function create(): void
     {
         $form = $this->initForm(true);
-        if ($this->saveForm($form, true)) {
-            ;
-        }
-        {
+        if ($this->saveForm($form, true)) {;
+        } {
             $this->tpl->setOnScreenMessage("success", $this->lng->txt("msg_obj_modified"), true);
             $this->returnToParent();
         }
@@ -83,20 +81,18 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
         $this->tpl->setContent($form->getHTML());
     }
 
-    public function edit() : void
+    public function edit(): void
     {
         $form = $this->initForm();
 
         $this->tpl->setContent($form->getHTML());
     }
 
-    public function update() : void
+    public function update(): void
     {
         $form = $this->initForm(false);
-        if ($this->saveForm($form, false)) {
-            ;
-        }
-        {
+        if ($this->saveForm($form, false)) {;
+        } {
             $this->tpl->setOnScreenMessage("success", $this->lng->txt("msg_obj_modified"), true);
             $this->returnToParent();
         }
@@ -107,7 +103,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
     /**
      * Init editing form
      */
-    protected function initForm(bool $a_create = false) : ilPropertyFormGUI
+    protected function initForm(bool $a_create = false): ilPropertyFormGUI
     {
         $form = new ilPropertyFormGUI();
 
@@ -128,37 +124,20 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
         $data->setMaxLength(40);
         $data->setSize(40);
         $form->addItem($data);
-        // page value
-        $page_value = new ilTextInputGUI('page_value', 'page_value');
-        $page_value->setMaxLength(40);
-        $page_value->setSize(40);
-        $page_value->setRequired(true);
-        $form->addItem($page_value);
 
-        // page file
-        $page_file = new ilFileInputGUI('page_file', 'page_file');
-        $page_file->setALlowDeletion(true);
-        $form->addItem($page_file);
-
-        // additional data
-        $data = new ilTextInputGUI('additional_data', 'additional_data');
-        $data->setMaxLength(40);
-        $data->setSize(40);
-        $form->addItem($data);
-
-        // page value
+        // interact url
         $page_value = new ilTextInputGUI('interact_url', 'interact_url');
         $page_value->setMaxLength(40);
         $page_value->setSize(40);
         $page_value->setRequired(true);
         $form->addItem($page_value);
 
-        // page file
-        $page_file = new ilFileInputGUI('upload_url', 'upload_url');
-        $page_value->setMaxLength(40);
-        $page_value->setSize(40);
-        $page_value->setRequired(true);
-        $form->addItem($page_value);
+        // upload url
+        $page_file = new ilTextInputGUI('upload_url', 'upload_url');
+        $page_file->setMaxLength(40);
+        $page_file->setSize(40);
+        $page_file->setRequired(true);
+        $form->addItem($page_file);
 
 
         // page info values
@@ -187,7 +166,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
         return $form;
     }
 
-    protected function saveForm(ilPropertyFormGUI $form, bool $a_create) : bool
+    protected function saveForm(ilPropertyFormGUI $form, bool $a_create): bool
     {
         if ($form->checkInput()) {
             $properties = $this->getProperties();
@@ -253,16 +232,18 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
      * @param string    page mode (edit, presentation, print, preview, offline)
      * @return string   html code
      */
-    public function getElementHTML(string $a_mode, array $a_properties, string $a_plugin_version) : string
+    public function getElementHTML(string $a_mode, array $a_properties, string $a_plugin_version): string
     {
         $pl = $this->getPlugin();
 
         $display = array_merge($a_properties, $this->getPageInfo());
 
+        //TODO ggf Vite Template anpassen, dann kopieren von Inhalten aus Moodle Plugin
 
-//TODO ggf Vite Template anpassen, dann kopieren von Inhalten aus Moodle Plugin
-        $html = $this->getPlugin()->getTemplate('/dist/src/chat.html', false, false);
-
+        $tpl = new ilTemplate($pl->getDirectory() . "/app/src/" . "chat.html", false, false);
+        $tpl->setVariable("CHAT_ID", "1234");
+        $tpl->parseCurrentBlock();
+        return $tpl->get();
         // show properties stores in the page
         // $html = '<pre>' . print_r($display, true);
 
@@ -308,7 +289,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
     /**
      * download file of file lists
      */
-    function downloadFile() : void
+    function downloadFile(): void
     {
         $file_id = (int) $_GET['id'];
         if ($_SESSION[__CLASS__]['allowedFiles'][$file_id]) {
@@ -323,7 +304,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
      * Get information about the page that embeds the component
      * @return    array    key => value
      */
-    public function getPageInfo() : array
+    public function getPageInfo(): array
     {
         return array(
             'page_id' => $this->plugin->getPageId(),
