@@ -57,15 +57,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 	 */
 	public function getJavascriptFiles(string $a_mode): array
 	{
-		return ["app/assets/chat.js"];
-	}
- 
-	/**
-	 * Get css files regardless of output mode
-	 */
-	public function getCssFiles(string $a_mode): array
-	{
-		return ["app/assets/style.css"];
+		return ["dist/assets/chat.min.js"];
 	}
  
 
