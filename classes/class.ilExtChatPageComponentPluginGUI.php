@@ -240,7 +240,9 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
 
         //TODO ggf Vite Template anpassen, dann kopieren von Inhalten aus Moodle Plugin
 
-        $tpl = new ilTemplate($pl->getDirectory() . "/app/src/" . "chat.html", false, false);
+        // $tpl = new ilTemplate($pl->getDirectory() . "/app/src/" . "chat.html", false, false);
+        $tpl = $pl->getTemplate("tpl.chat.html");
+
         $tpl->setVariable("CHAT_ID", "1234");
         $tpl->parseCurrentBlock();
         return $tpl->get();

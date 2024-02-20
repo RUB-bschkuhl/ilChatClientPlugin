@@ -1,7 +1,7 @@
 {
   "name": "extchat",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -13,6 +13,7 @@
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.0.3",
+    "terser": "^5.27.1",
     "vite": "^5.1.0"
   }
 }

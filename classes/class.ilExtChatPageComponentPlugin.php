@@ -57,7 +57,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 	 */
 	public function getJavascriptFiles(string $a_mode): array
 	{
-		return array("app/assets/main.js");
+		return ["app/assets/chat.js"];
 	}
  
 	/**
@@ -65,7 +65,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
 	 */
 	public function getCssFiles(string $a_mode): array
 	{
-		return array("app/assets/main.css");
+		return ["app/assets/style.css"];
 	}
  
 
