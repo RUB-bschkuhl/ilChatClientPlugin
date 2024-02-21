@@ -128,7 +128,7 @@ export default {
       infoDisplayMessage: null,
       infoDisplay: false,
       detached: false,
-      interactapiurl: "",
+      interactapiurl: "Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/Services/interact.php",
       uploadapiurl: "",
       storedfiles: [],
     };
@@ -164,6 +164,7 @@ export default {
         },
         body: formData.toString(),
       });
+      console.log(response)
       try {
         if (response.ok != true) {
           this.errorMessage = 'Error while fetching response, please try again later.';
@@ -228,6 +229,7 @@ export default {
       promptRequest.uid = "1";
       promptRequest.cid = "1";
       promptRequest.response = "";
+      promptRequest.sourcedocs = "";
 
       let responseData = await this.postData(this.interactapiurl, promptRequest);
       if (responseData == "false" || responseData == null || responseData === undefined || responseData.response === undefined) {

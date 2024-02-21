@@ -11,11 +11,12 @@ This is an example plugin with minimal features for the ILIAS PageComponent Plug
 ```
 mkdir -p Customizing/global/plugins/Services/COPage/PageComponent
 cd Customizing/global/plugins/Services/COPage/PageComponent
-git clone https://github.com/ILIAS-eLearning/ExtChatPageComponent.git ChatClient
+git clone https://github.com/ILIAS-eLearning/ChatClient.git ChatClient
 
 ```For DEV; requires node 18+
 cd ChatClient
 npm install
+npm run build
 ```
 
 ### Branching

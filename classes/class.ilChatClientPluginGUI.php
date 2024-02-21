@@ -17,12 +17,12 @@
  *********************************************************************/
 
 /**
- * External Chat Page Component GUI
+ * ChatClient GUI
  * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
- * @ilCtrl_isCalledBy ilExtChatPageComponentPluginGUI: ilPCPluggedGUI
- * @ilCtrl_isCalledBy ilExtChatPageComponentPluginGUI: ilUIPluginRouterGUI
+ * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilPCPluggedGUI
+ * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilUIPluginRouterGUI
  */
-class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
+class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 {
     protected ilLanguage $lng;
     protected ilCtrl $ctrl;
@@ -209,6 +209,24 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
                 $this->plugin->updateData($id, $form->getInput('additional_data'));
             }
 
+            // interact url
+            $id = $properties['interact_url'] ?? null;
+            if (empty($id)) {
+                $id = $this->plugin->saveData($form->getInput('interact_url'));
+                $properties['interact_url'] = $id;
+            } else {
+                $this->plugin->updateData($id, $form->getInput('interact_url'));
+            }
+
+            // upload url
+            $id = $properties['upload_url'] ?? null;
+            if (empty($id)) {
+                $id = $this->plugin->saveData($form->getInput('upload_url'));
+                $properties['upload_url'] = $id;
+            } else {
+                $this->plugin->updateData($id, $form->getInput('upload_url'));
+            }
+
             if ($a_create) {
                 return $this->createElement($properties);
             } else {
@@ -264,7 +282,7 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
         //         $_SESSION[__CLASS__]['allowedFiles'][$fileObj->getId()] = true;
 
         //         $this->ctrl->setParameter($this, 'id', $fileObj->getId());
-        //         $url = $this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilExtChatPageComponentPluginGUI'),
+        //         $url = $this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
         //             'downloadFile');
         //         $title = $fileObj->getPresentationTitle();
 
@@ -284,8 +302,6 @@ class ilExtChatPageComponentPluginGUI extends ilPageComponentPluginGUI
         // }
 
         // $html .= '</pre>';
-
-        return $html;
     }
 
     /**

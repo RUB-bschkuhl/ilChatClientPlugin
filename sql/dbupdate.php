@@ -3,7 +3,7 @@
 /* Copyright (c) 1998-2017 ILIAS open source, Extended GPL, see docs/LICENSE  */
 
 /**
- * External Chat Page Component  plugin: database update script 
+ * ChatClient  plugin: database update script 
  */ 
 
 /**

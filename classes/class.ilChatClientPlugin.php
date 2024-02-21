@@ -17,10 +17,10 @@
  *********************************************************************/
 
 /**
- * External Chat Page Component plugin
+ * ChatClient plugin
  * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
-class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
+class ilChatClientPlugin extends ilPageComponentPlugin
 {
     /**
      * Get plugin name
@@ -28,7 +28,7 @@ class ilExtChatPageComponentPlugin extends ilPageComponentPlugin
      */
     public function getPluginName() : string
     {
-        return "ExtChatPageComponent";
+        return "ChatClient";
     }
 
     // public function getTemplate(string $a_template, bool $a_par1 = true, bool $a_par2 = true): string
