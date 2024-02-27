@@ -40,6 +40,7 @@ class chatclient
         );
 
         $curl = curl_init();
+        //TODO HTTPS,VERIFYPEERS ?
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));

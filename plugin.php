@@ -10,7 +10,7 @@
 $id = "excpc";
 
 // code version; must be changed for all code changes
-$version = "0.0.4";
+$version = "0.0.9";
 
 // ilias min and max version; must always reflect the versions that should
 // run with the plugin
@@ -22,5 +22,5 @@ $responsible = "Bastian Schmidt-Kuhl";
 $responsible_mail = "bastian.schmidt-kuhl@ruhr-uni-bochum.de";
 
 // this plugin has an own exporter class
-//$supports_export = true;
+$supports_export = true;
 ?>

@@ -22,23 +22,29 @@
  */
 class ilChatClientPlugin extends ilPageComponentPlugin
 {
+    private static $instance;
+    const PLUGIN_NAME = 'ChatClient';
+    const TABLE_NAME = "excpc_data";
+    const CTYPE = 'Services';
+    const CNAME = 'COPage';
+    const SLOT_ID = 'pgcp';
+    const PLUGIN_ID = 'excpc';
+
+    public function __construct()
+    {
+        global $DIC;
+        $this->db = $DIC->database();
+        parent::__construct($this->db, $DIC["component.repository"], self::PLUGIN_ID);
+    }
+    
     /**
      * Get plugin name
      * @return string
      */
     public function getPluginName() : string
     {
-        return "ChatClient";
+        return self::PLUGIN_NAME;
     }
-
-    // public function getTemplate(string $a_template, bool $a_par1 = true, bool $a_par2 = true): string
-    // {
-    //     $tpl = new ilTemplate($this->getDirectory() . "/dist/src/" . $a_template, $a_par1, $a_par2);
-    //     $tpl->setVariable("CHAT_ID", "1234");
-
-    //     $tpl->parseCurrentBlock();
-    //     return $tpl->get();
-    // }
 
     /**
      * Check if parent type is valid
@@ -51,165 +57,104 @@ class ilChatClientPlugin extends ilPageComponentPlugin
         }
         return false;
     }
+
+    public static function getInstance(): ilChatClientPlugin
+    {
+        if (!isset(self::$instance)) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
  
 	/**
 	 * Get Javascript files regardless of output mode
 	 */
 	public function getJavascriptFiles(string $a_mode): array
 	{
-		return ["dist/assets/chat.min.js"];
+		return ['dist/assets/chat.min.js'];
 	}
  
-
-    /**
-     * Handle an event
-     * @param string $a_component
-     * @param string $a_event
-     * @param mixed  $a_parameter
-     */
-    public function handleEvent(string $a_component, string $a_event, $a_parameter) : void
-    {
-        $_SESSION['excpc_listened_event'] = array('time' => time(), 'event' => $a_event);
-    }
-
-    /**
-     * This function is called when the page content is cloned
-     * @param array  $a_properties     properties saved in the page, (should be modified if neccessary)
-     * @param string $a_plugin_version plugin version of the properties
-     */
-    public function onClone(array &$a_properties, string $a_plugin_version) : void
-    {
-        global $DIC;
-        $mt = $DIC->ui()->mainTemplate();
-        if ($file_id = $a_properties['page_file']) {
-            try {
-                include_once("./Modules/File/classes/class.ilObjFile.php");
-                $fileObj = new ilObjFile($file_id, false);
-                $newObj = clone($fileObj);
-                $newObj->setId(0);
-                $new_id = $newObj->create();
-                $newObj = new ilObjFile($new_id, false);
-                $this->rCopy($fileObj->getDirectory(), $newObj->getDirectory());
-                $a_properties['page_file'] = $newObj->getId();
-                $mt->setOnScreenMessage("info", "File Object $file_id cloned.", true);
-            } catch (Exception $e) {
-                $mt->setOnScreenMessage("failure", $e->getMessage(), true);
-            }
-        }
-
-        if ($additional_data_id = $a_properties['additional_data_id']) {
-            $data = $this->getData($additional_data_id);
-            $id = $this->saveData($data);
-            $a_properties['additional_data_id'] = $id;
-        }
-    }
-
-    /**
-     * This function is called before the page content is deleted
-     * @param array  $a_properties     properties saved in the page (will be deleted afterwards)
-     * @param string $a_plugin_version plugin version of the properties
-     */
-    public function onDelete(array $a_properties, string $a_plugin_version, bool $move_operation = false) : void
-    {
-        global $DIC;
-        $mt = $DIC->ui()->mainTemplate();
-
-        if ($move_operation) {
-            return;
-        }
-
-        if ($file_id = ($a_properties['page_file'] ?? null)) {
-            try {
-                include_once("./Modules/File/classes/class.ilObjFile.php");
-                $fileObj = new ilObjFile($file_id, false);
-                $fileObj->delete();
-                $mt->setOnScreenMessage("info", "File Object $file_id deleted.", true);
-            } catch (Exception $e) {
-                $mt->setOnScreenMessage("failure", $e->getMessage(), true);
-            }
-        }
-
-        if ($additional_data_id = $a_properties['additional_data_id']) {
-            $this->deleteData($additional_data_id);
-        }
-    }
-
-    /**
-     * Recursively copy directory (taken from php manual)
-     * @param string $src
-     * @param string $dst
-     */
-    private function rCopy(string $src, string $dst) : void
-    {
-        $dir = opendir($src);
-        if (!is_dir($dst)) {
-            mkdir($dst);
-        }
-        while (false !== ($file = readdir($dir))) {
-            if (($file != '.') && ($file != '..')) {
-                if (is_dir($src . '/' . $file)) {
-                    $this->rCopy($src . '/' . $file, $dst . '/' . $file);
-                } else {
-                    copy($src . '/' . $file, $dst . '/' . $file);
-                }
-            }
-        }
-        closedir($dir);
-    }
-
-    /**
-     * Get additional data by id
-     */
-    public function getData(int $id) : ?string
+    public static function setValue($setting, $value, $type)
     {
         global $DIC;
         $db = $DIC->database();
 
-        $query = "SELECT data FROM excpc_data WHERE id = " . $db->quote($id, 'integer');
-        $result = $db->query($query);
-        if ($row = $db->fetchAssoc($result)) {
-            return $row['data'];
-        }
-        return null;
-    }
-
-    /**
-     * Save new additional data
-     */
-    public function saveData(string $data) : int
-    {
-        global $DIC;
-        $db = $DIC->database();
-
-        $id = $db->nextId('excpc_data');
-        $db->insert(
-            'excpc_data',
-            array(
-                'id' => array('integer', $id),
-                'data' => array('text', $data)
-            )
-        );
-        return $id;
-    }
-
-    /**
-     * Update additional data
-     */
-    public function updateData(int $id, string $data) : void
-    {
-        global $DIC;
-        $db = $DIC->database();
-
-        $db->update(
-            'excpc_data',
-            array(
-                'data' => array('text', $data)
-            ),
-            array(
-                'id' => array('integer', $id)
-            )
+        $db->manipulate(
+            "UPDATE " . ilChatClientPlugin::TABLE_NAME . " SET " .
+            " value = " . $db->quote($value, $type) .
+            " WHERE name = " . $db->quote($setting, "text")
         );
     }
+
+    public static function getValue($setting)
+    {
+        global $DIC;
+        $db = $DIC->database();
+        $value = null;
+        $set = $db->query(
+            "SELECT value FROM " . ilChatClientPlugin::TABLE_NAME .
+            " WHERE name = " . $db->quote($setting, "text")
+        );
+
+        if ($rec = $set->fetchRow()) {
+            $value = $rec['value'];
+        }
+        return $value;
+    }
+    // /**
+    //  * Get additional data by id
+    //  */
+    // public function getData(int $id) : ?string
+    // {
+    //     global $DIC;
+    //     $db = $DIC->database();
+
+    //     $query = "SELECT data FROM excpc_data WHERE id = " . $db->quote($id, 'integer');
+    //     $result = $db->query($query);
+    //     if ($row = $db->fetchAssoc($result)) {
+    //         return $row['data'];
+    //     }
+    //     return null;
+    // }
+
+    // /**
+    //  * Save new additional data
+    //  */
+    // public function saveData(string $data) : int
+    // {
+    //     global $DIC;
+    //     $db = $DIC->database();
+
+    //     $id = $db->nextId('excpc_data');
+    //     $db->insert(
+    //         'excpc_data',
+    //         array(
+    //             'id' => array('integer', $id),
+    //             'data' => array('text', $data)
+    //         )
+    //     );
+    //     return $id;
+    // }
+
+    // /**
+    //  * Update additional data
+    //  */
+    // public function updateData(int $id, string $data) : void
+    // {
+    //     global $DIC;
+    //     $db = $DIC->database();
+
+    //     $db->update(
+    //         'excpc_data',
+    //         array(
+    //             'data' => array('text', $data)
+    //         ),
+    //         array(
+    //             'id' => array('integer', $id)
+    //         )
+    //     );
+    // }
 
     /**
      * Delete additional data

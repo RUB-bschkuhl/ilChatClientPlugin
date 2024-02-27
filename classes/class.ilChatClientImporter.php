@@ -52,17 +52,24 @@ class ilChatClientImporter extends ilPageComponentPluginImporter
         $properties = self::getPCProperties($new_id);
         $version = self::getPCVersion($new_id);
 
-        // write the mapped file id to the properties
-        if ($old_file_id = $properties['page_file']) {
-            $new_file_id = $a_mapping->getMapping("Modules/File", 'file', $old_file_id);
-            $properties['page_file'] = $new_file_id;
-        }
-
+  
         // save the data from the imported xml and write its id to the properties
         if ($additional_data_id = $properties['additional_data_id']) {
             $data = html_entity_decode(substr($a_xml, 6, -7));
             $id = $plugin->saveData($data);
             $properties['additional_data_id'] = $id;
+        }
+        // save the data from the imported xml and write its id to the properties
+        if ($interact_url = $properties['interact_url']) {
+            $data = html_entity_decode(substr($a_xml, 6, -7));
+            $id = $plugin->saveData($data);
+            $properties['interact_url'] = $id;
+        }
+        // save the data from the imported xml and write its id to the properties
+        if ($upload_url = $properties['upload_url']) {
+            $data = html_entity_decode(substr($a_xml, 6, -7));
+            $id = $plugin->saveData($data);
+            $properties['upload_url'] = $id;
         }
 
         self::setPCProperties($new_id, $properties);

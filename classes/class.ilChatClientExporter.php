@@ -36,24 +36,24 @@ class ilChatClientExporter extends ilPageComponentPluginExporter
     public function getXmlExportHeadDependencies(string $a_entity, string $a_target_release, array $a_ids) : array
     {
         // collect the files to export
-        $file_ids = array();
-        foreach ($a_ids as $id) {
-            $properties = self::getPCProperties($id);
-            if (isset($properties['page_file'])) {
-                $file_ids[] = $properties['page_file'];
-            }
-        }
+        // $file_ids = array();
+        // foreach ($a_ids as $id) {
+        //     $properties = self::getPCProperties($id);
+        //     if (isset($properties['page_file'])) {
+        //         $file_ids[] = $properties['page_file'];
+        //     }
+        // }
 
-        // add the files as dependencies
-        if (!empty(($file_ids))) {
-            return array(
-                array(
-                    "component" => "Modules/File",
-                    "entity" => "file",
-                    "ids" => $file_ids
-                )
-            );
-        }
+        // // add the files as dependencies
+        // if (!empty(($file_ids))) {
+        //     return array(
+        //         array(
+        //             "component" => "Modules/File",
+        //             "entity" => "file",
+        //             "ids" => $file_ids
+        //         )
+        //     );
+        // }
 
         return array();
     }

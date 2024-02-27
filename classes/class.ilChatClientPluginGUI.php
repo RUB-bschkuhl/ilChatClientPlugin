@@ -174,32 +174,6 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             // value saved in the page
             $properties['page_value'] = $form->getInput('page_value');
 
-            // file object
-            if (isset($_FILES["page_file"]["name"])) {
-                $old_file_id = empty($properties['page_file']) ? null : $properties['page_file'];
-
-                $fileObj = new ilObjFile((int) $old_file_id, false);
-                $fileObj->setType("file");
-                $fileObj->setTitle($_FILES["page_file"]["name"]);
-                $fileObj->setDescription("");
-                $fileObj->setFileName($_FILES["page_file"]["name"]);
-                $fileObj->setMode("filelist");
-                if (empty($old_file_id)) {
-                    $fileObj->create();
-                } else {
-                    $fileObj->update();
-                }
-                // upload file to filesystem
-                if ($_FILES["page_file"]["tmp_name"] !== "") {
-                    $fileObj->getUploadFile(
-                        $_FILES["page_file"]["tmp_name"],
-                        $_FILES["page_file"]["name"]
-                    );
-                }
-
-                $properties['page_file'] = $fileObj->getId();
-            }
-
             // additional data
             $id = $properties['additional_data_id'] ?? null;
             if (empty($id)) {
@@ -256,9 +230,6 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         $display = array_merge($a_properties, $this->getPageInfo());
 
-        //TODO ggf Vite Template anpassen, dann kopieren von Inhalten aus Moodle Plugin
-
-        // $tpl = new ilTemplate($pl->getDirectory() . "/app/src/" . "chat.html", false, false);
         $tpl = $pl->getTemplate("tpl.chat.html");
 
         $tpl->setVariable("CHAT_ID", "1234");
