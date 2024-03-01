@@ -4,12 +4,13 @@
 
 /**
  * ChatClient plugin: database update script 
+ * @var $ilDB ilDB
  */ 
 
 $fields = [
     'name' => [
         'type' => 'text',
-        'length' => 100,
+        'length' => 500,
         'notnull' => true,
     ],
     'value' => [
@@ -25,12 +26,12 @@ if (!$ilDB->tableExists('excpc_data')) {
 }
 
 $ilDB->insert('excpc_data', [
-    'setting' => ['text', 'interact_url'],
-    'value' => null
+    'name' => ['text', 'interact_url'],
+    'value' => ['text', null]
 ]);
 
-$ilDB->insert('copg_pgcp_vpco_config', [
-    'setting' => ['text', 'upload_url'],
-    'value' => null
+$ilDB->insert('excpc_data', [
+    'name' => ['text', 'upload_url'],
+    'value' => ['text', null]
 ]);
 ?>

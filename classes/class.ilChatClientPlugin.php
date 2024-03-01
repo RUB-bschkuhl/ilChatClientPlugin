@@ -36,12 +36,12 @@ class ilChatClientPlugin extends ilPageComponentPlugin
         $this->db = $DIC->database();
         parent::__construct($this->db, $DIC["component.repository"], self::PLUGIN_ID);
     }
-    
+
     /**
      * Get plugin name
      * @return string
      */
-    public function getPluginName() : string
+    public function getPluginName(): string
     {
         return self::PLUGIN_NAME;
     }
@@ -49,10 +49,10 @@ class ilChatClientPlugin extends ilPageComponentPlugin
     /**
      * Check if parent type is valid
      */
-    public function isValidParentType(string $a_parent_type) : bool
+    public function isValidParentType(string $a_parent_type): bool
     {
         // only available in content page
-        if(in_array($a_parent_type, array("copa"))){
+        if (in_array($a_parent_type, array("copa"))) {
             return true;
         }
         return false;
@@ -66,15 +66,15 @@ class ilChatClientPlugin extends ilPageComponentPlugin
 
         return self::$instance;
     }
- 
-	/**
-	 * Get Javascript files regardless of output mode
-	 */
-	public function getJavascriptFiles(string $a_mode): array
-	{
-		return ['dist/assets/chat.min.js'];
-	}
- 
+
+    /**
+     * Get Javascript files regardless of output mode
+     */
+    public function getJavascriptFiles(string $a_mode): array
+    {
+        return ['dist/assets/chat.min.js'];
+    }
+
     public static function setValue($setting, $value, $type)
     {
         global $DIC;
@@ -82,8 +82,8 @@ class ilChatClientPlugin extends ilPageComponentPlugin
 
         $db->manipulate(
             "UPDATE " . ilChatClientPlugin::TABLE_NAME . " SET " .
-            " value = " . $db->quote($value, $type) .
-            " WHERE name = " . $db->quote($setting, "text")
+                " value = " . $db->quote($value, $type) .
+                " WHERE name = " . $db->quote($setting, "text")
         );
     }
 
@@ -94,77 +94,12 @@ class ilChatClientPlugin extends ilPageComponentPlugin
         $value = null;
         $set = $db->query(
             "SELECT value FROM " . ilChatClientPlugin::TABLE_NAME .
-            " WHERE name = " . $db->quote($setting, "text")
+                " WHERE name = " . $db->quote($setting, "text")
         );
 
         if ($rec = $set->fetchRow()) {
             $value = $rec['value'];
         }
         return $value;
-    }
-    // /**
-    //  * Get additional data by id
-    //  */
-    // public function getData(int $id) : ?string
-    // {
-    //     global $DIC;
-    //     $db = $DIC->database();
-
-    //     $query = "SELECT data FROM excpc_data WHERE id = " . $db->quote($id, 'integer');
-    //     $result = $db->query($query);
-    //     if ($row = $db->fetchAssoc($result)) {
-    //         return $row['data'];
-    //     }
-    //     return null;
-    // }
-
-    // /**
-    //  * Save new additional data
-    //  */
-    // public function saveData(string $data) : int
-    // {
-    //     global $DIC;
-    //     $db = $DIC->database();
-
-    //     $id = $db->nextId('excpc_data');
-    //     $db->insert(
-    //         'excpc_data',
-    //         array(
-    //             'id' => array('integer', $id),
-    //             'data' => array('text', $data)
-    //         )
-    //     );
-    //     return $id;
-    // }
-
-    // /**
-    //  * Update additional data
-    //  */
-    // public function updateData(int $id, string $data) : void
-    // {
-    //     global $DIC;
-    //     $db = $DIC->database();
-
-    //     $db->update(
-    //         'excpc_data',
-    //         array(
-    //             'data' => array('text', $data)
-    //         ),
-    //         array(
-    //             'id' => array('integer', $id)
-    //         )
-    //     );
-    // }
-
-    /**
-     * Delete additional data
-     */
-    public function deleteData(int $id) : void
-    {
-        global $DIC;
-        $db = $DIC->database();
-
-        $query = "DELETE FROM excpc_data WHERE ID = " . $db->quote($id, 'integer');
-        $db->manipulate($query);
     }
 }

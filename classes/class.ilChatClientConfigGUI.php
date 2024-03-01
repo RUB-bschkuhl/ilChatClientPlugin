@@ -86,11 +86,11 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
         $this->dic->tabs()->activateTab(self::TAB_CONFIGURATION);
         $confForm = new ilPropertyFormGUI();
         $confForm->setFormAction($this->dic->ctrl()->getFormAction($this));
-        $input = new ilNumberInputGUI($this->pl->txt('config_interact_url'), "interact_url");
+        $input = new ilUriInputGUI($this->pl->txt('config_interact_url'), "interact_url");
         $input->setInfo($this->pl->txt('config_interact_url_info'));
         $confForm->addItem($input);
 
-        $input = new ilNumberInputGUI($this->pl->txt('config_upload_url'), "upload_url");
+        $input = new ilUriInputGUI($this->pl->txt('config_upload_url'), "upload_url");
         $input->setInfo($this->pl->txt('config_upload_url_info'));
         $confForm->addItem($input);
         $confForm->addCommandButton(self::CMD_UPDATE_CONFIGURE, $this->pl->txt('config_save'));
@@ -124,8 +124,8 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
 
         $form = $this->getConfigForm();
         if ($form->checkInput()) {
-            $this->pl::setValue("interact_url", $form->getInput("interact_url"), "integer");
-            $this->pl::setValue("upload_url", $form->getInput("upload_url"), "integer");
+            $this->pl::setValue("interact_url", $form->getInput("interact_url"), "text");
+            $this->pl::setValue("upload_url", $form->getInput("upload_url"), "text");
             $this->dic->ui()->mainTemplate()->setOnScreenMessage('success', $this->pl->txt('config_configuration_saved'), true);
         }
 

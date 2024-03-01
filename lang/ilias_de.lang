@@ -8,3 +8,9 @@
 cmd_insert#:#Externe Chat-Komponente einfügen
 content_plugin_version#:#Inhalt zuletzt bearbeitet mit Version
 edit_input_field#:#Externe Chat-Komponente bearbeiten
+config_interact_url#:#Interact URL
+config_upload_url#:#Upload URL
+config_interact_url_info#:#Interact URL Info
+config_upload_url_info#:#Update URL Info
+config_configuration#:#Konfiguration
+config_config_save#:#Speichern
