@@ -10,7 +10,8 @@ content_plugin_version#:#Inhalt zuletzt bearbeitet mit Version
 edit_input_field#:#Externe Chat-Komponente bearbeiten
 config_interact_url#:#Interact URL
 config_upload_url#:#Upload URL
-config_interact_url_info#:#Interact URL Info
-config_upload_url_info#:#Update URL Info
+config_interact_url_info#:#Update Interact URL
+config_upload_url_info#:#Update Upload URL
 config_configuration#:#Konfiguration
-config_config_save#:#Speichern
+config_configuration_saved#:#Speichern
+config_save#:#Speichern

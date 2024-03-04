@@ -27,6 +27,10 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     protected ilLanguage $lng;
     protected ilCtrl $ctrl;
     protected ilGlobalTemplateInterface $tpl;
+    /**
+     * @var ilChatClientPlugin
+     */
+    protected ilChatClientPlugin $pl;
 
     public function __construct()
     {
@@ -34,9 +38,11 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         parent::__construct();
 
+        $this->db = $DIC->database();
         $this->lng = $DIC->language();
         $this->ctrl = $DIC->ctrl();
         $this->tpl = $DIC['tpl'];
+        $this->pl = new ilChatClientPlugin($this->db, $DIC["component.repository"], ilChatClientPlugin::PLUGIN_ID);
     }
 
     /**
@@ -114,31 +120,16 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $page_value->setRequired(true);
         $form->addItem($page_value);
 
-        // page file
-        $page_file = new ilFileInputGUI('page_file', 'page_file');
-        $page_file->setALlowDeletion(true);
-        $form->addItem($page_file);
+        $interacturl = $this->pl::getValue("interact_url");
+        $uploadurl = $this->pl::getValue("upload_url");
 
-        // additional data
-        $data = new ilTextInputGUI('additional_data', 'additional_data');
-        $data->setMaxLength(40);
-        $data->setSize(40);
-        $form->addItem($data);
+        $info = new ilNonEditableValueGUI($this->lng->txt("interact_url"));
+        $info->setValue($interacturl);
+        $form->addItem($info);
 
-        // interact url
-        $page_value = new ilTextInputGUI('interact_url', 'interact_url');
-        $page_value->setMaxLength(40);
-        $page_value->setSize(40);
-        $page_value->setRequired(true);
-        $form->addItem($page_value);
-
-        // upload url
-        $page_file = new ilTextInputGUI('upload_url', 'upload_url');
-        $page_file->setMaxLength(40);
-        $page_file->setSize(40);
-        $page_file->setRequired(true);
-        $form->addItem($page_file);
-
+        $info = new ilNonEditableValueGUI($this->lng->txt("upload_url"));
+        $info->setValue($uploadurl);
+        $form->addItem($info);
 
         // page info values
         foreach ($this->getPageInfo() as $key => $value) {
@@ -155,7 +146,6 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         } else {
             $prop = $this->getProperties();
             $page_value->setValue($prop['page_value']);
-            $data->setValue($this->plugin->getData($prop['additional_data_id']));
 
             $form->addCommandButton("update", $this->lng->txt("save"));
             $form->addCommandButton("cancel", $this->lng->txt("cancel"));
@@ -174,32 +164,14 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             // value saved in the page
             $properties['page_value'] = $form->getInput('page_value');
 
-            // additional data
-            $id = $properties['additional_data_id'] ?? null;
-            if (empty($id)) {
-                $id = $this->plugin->saveData($form->getInput('additional_data'));
-                $properties['additional_data_id'] = $id;
-            } else {
-                $this->plugin->updateData($id, $form->getInput('additional_data'));
-            }
-
-            // interact url
-            $id = $properties['interact_url'] ?? null;
-            if (empty($id)) {
-                $id = $this->plugin->saveData($form->getInput('interact_url'));
-                $properties['interact_url'] = $id;
-            } else {
-                $this->plugin->updateData($id, $form->getInput('interact_url'));
-            }
-
-            // upload url
-            $id = $properties['upload_url'] ?? null;
-            if (empty($id)) {
-                $id = $this->plugin->saveData($form->getInput('upload_url'));
-                $properties['upload_url'] = $id;
-            } else {
-                $this->plugin->updateData($id, $form->getInput('upload_url'));
-            }
+            // example save input
+            // $id = $properties['upload_url'] ?? null;
+            // if (empty($id)) {
+            //     $id = $this->plugin->saveData($form->getInput('upload_url'));
+            //     $properties['upload_url'] = $id;
+            // } else {
+            //     $this->plugin->updateData($id, $form->getInput('upload_url'));
+            // }
 
             if ($a_create) {
                 return $this->createElement($properties);
