@@ -27,10 +27,12 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     protected ilLanguage $lng;
     protected ilCtrl $ctrl;
     protected ilGlobalTemplateInterface $tpl;
+    // protected ilTree $tree;
     /**
      * @var ilChatClientPlugin
      */
     protected ilChatClientPlugin $pl;
+    protected $factory; 
 
     public function __construct()
     {
@@ -42,8 +44,22 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->lng = $DIC->language();
         $this->ctrl = $DIC->ctrl();
         $this->tpl = $DIC['tpl'];
+        // $this->tree = $DIC->repositoryTree();
         $this->pl = new ilChatClientPlugin($this->db, $DIC["component.repository"], ilChatClientPlugin::PLUGIN_ID);
+
     }
+
+
+	/**
+	* Show a data table
+	*/
+	function showSomeDataList()
+	{
+		include_once("./.../classes/class.ilChatClientTableGUI.php");
+		$table_gui = new ilChatClientTableGUI($this, "showSomeDataList");
+ 
+		$this->tpl->setContent($table_gui->getHTML());
+	}
 
     /**
      * Execute command
@@ -205,6 +221,9 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $tpl = $pl->getTemplate("tpl.chat.html");
 
         $tpl->setVariable("CHAT_ID", "1234");
+
+        $this->showSomeDataList();
+
         $tpl->parseCurrentBlock();
         return $tpl->get();
         // show properties stores in the page
@@ -245,6 +264,10 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         // }
 
         // $html .= '</pre>';
+    }
+
+    function getCourseFiles():  void {
+
     }
 
     /**

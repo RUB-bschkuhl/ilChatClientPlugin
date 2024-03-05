@@ -10,7 +10,7 @@
 $id = "excpc";
 
 // code version; must be changed for all code changes
-$version = "0.0.13";
+$version = "0.0.14";
 
 // ilias min and max version; must always reflect the versions that should
 // run with the plugin
