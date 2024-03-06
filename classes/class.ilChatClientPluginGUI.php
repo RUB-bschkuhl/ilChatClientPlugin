@@ -27,12 +27,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     protected ilLanguage $lng;
     protected ilCtrl $ctrl;
     protected ilGlobalTemplateInterface $tpl;
-    // protected ilTree $tree;
-    /**
-     * @var ilChatClientPlugin
-     */
     protected ilChatClientPlugin $pl;
-    protected $factory; 
 
     public function __construct()
     {
@@ -44,25 +39,35 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->lng = $DIC->language();
         $this->ctrl = $DIC->ctrl();
         $this->tpl = $DIC['tpl'];
-        // $this->tree = $DIC->repositoryTree();
         $this->pl = new ilChatClientPlugin($this->db, $DIC["component.repository"], ilChatClientPlugin::PLUGIN_ID);
-
+        // $this->pl = new ilChatClientPlugin();
     }
 
 
-	/**
-	* Show a data table
-	*/
-	function showSomeDataList()
-	{
-		include_once("./.../classes/class.ilChatClientTableGUI.php");
-		$table_gui = new ilChatClientTableGUI($this, "showSomeDataList");
- 
-		$this->tpl->setContent($table_gui->getHTML());
-	}
+    /**
+     * Show a data table
+     */
+    // function getDataList(): string
+    // {
+    //     include_once("./Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/class.ilChatClientTableGUI.php");
+    //     $table_gui = new ilChatClientTableGUI($this, "getDataList");
+    //     return $table_gui->getHTML();
+    // }
 
     /**
-     * Execute command
+     * Show a data table
+     */
+    function getDataList()
+    {
+        global $tpl;
+        include_once("./Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/class.ilChatClientTableGUI.php");
+        $table_gui = new ilChatClientTableGUI($this, "getDataList");
+        $html = $table_gui->getHTML();
+        $tpl->setContent($html);
+    }
+
+    /**
+     * This function executes all commands routed to the class.
      */
     public function executeCommand(): void
     {
@@ -80,7 +85,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     }
 
     /**
-     * Create
+     * This function must generate the creation dialog. 
      */
     public function insert(): void
     {
@@ -89,7 +94,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     }
 
     /**
-     * Save new pc example element
+     * This function uses the form input to create the element.
      */
     public function create(): void
     {
@@ -103,6 +108,9 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->tpl->setContent($form->getHTML());
     }
 
+    /**
+     *  This function must generate the editing dialog.
+     */
     public function edit(): void
     {
         $form = $this->initForm();
@@ -221,9 +229,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $tpl = $pl->getTemplate("tpl.chat.html");
 
         $tpl->setVariable("CHAT_ID", "1234");
-
-        $this->showSomeDataList();
-
+        $this->getDataList();
         $tpl->parseCurrentBlock();
         return $tpl->get();
         // show properties stores in the page
@@ -266,8 +272,8 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         // $html .= '</pre>';
     }
 
-    function getCourseFiles():  void {
-
+    function getCourseFiles(): void
+    {
     }
 
     /**

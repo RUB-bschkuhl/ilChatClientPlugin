@@ -15,3 +15,5 @@ config_upload_url_info#:#Update Upload URL
 config_configuration#:#Konfiguration
 config_configuration_saved#:#Speichern
 config_save#:#Speichern
+course_files#:#Course files
+filename#:#Filename
