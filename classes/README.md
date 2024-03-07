@@ -24,3 +24,6 @@ This plugin follows the same branching-rules like the ILIAS-projekt itself:
 - trunk: Main-Development-Branch
 - release_X-X: Stable Release
 
+### Common Errors and solutions that worked here
+**PLUGINCLASS** was not found in the control structure
+-> Remove Ctrl from class

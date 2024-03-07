@@ -6,7 +6,7 @@ declare(strict_types=1);
  * Class ilChatClientConfigGUI
  * @ilCtrl_IsCalledBy ilChatClientConfigGUI: ilObjComponentSettingsGUI
  *
- * @author studer + raimann ag - Team Custom 1 <support-custom1@studer-raimann.ch>
+ * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
 class ilChatClientConfigGUI extends ilPluginConfigGUI
 {

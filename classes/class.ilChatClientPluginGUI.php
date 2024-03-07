@@ -39,29 +39,17 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->lng = $DIC->language();
         $this->ctrl = $DIC->ctrl();
         $this->tpl = $DIC['tpl'];
-        $this->pl = new ilChatClientPlugin($this->db, $DIC["component.repository"], ilChatClientPlugin::PLUGIN_ID);
+		$this->pl = ilChatClientPlugin::getInstance();
         // $this->pl = new ilChatClientPlugin();
     }
 
-
     /**
      * Show a data table
      */
-    // function getDataList(): string
-    // {
-    //     include_once("./Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/class.ilChatClientTableGUI.php");
-    //     $table_gui = new ilChatClientTableGUI($this, "getDataList");
-    //     return $table_gui->getHTML();
-    // }
-
-    /**
-     * Show a data table
-     */
-    function getDataList()
+    function getDataList(): void
     {
         global $tpl;
-        include_once("./Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/class.ilChatClientTableGUI.php");
-        $table_gui = new ilChatClientTableGUI($this, "getDataList");
+        $table_gui = new ilChatClientTableGUI($this, "get");
         $html = $table_gui->getHTML();
         $tpl->setContent($html);
     }
@@ -272,6 +260,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         // $html .= '</pre>';
     }
 
+    //TODO
     function getCourseFiles(): void
     {
     }
