@@ -48,10 +48,77 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
      */
     function getDataList(): void
     {
-        global $tpl;
-        $table_gui = new ilChatClientTableGUI($this, "get");
-        $html = $table_gui->getHTML();
-        $tpl->setContent($html);
+        global $tpl, $DIC;
+        // TODO ohne TableGUI ......
+        // https://docu.ilias.de/ilias.php?baseClass=illmpresentationgui&cmd=layout&ref_id=42&obj_id=27234
+        // Get Files aus Kurs
+
+
+        
+        // Upload ermöglichen, begrenzen auf bestimmte rollen
+        $id = 1;
+        $result = $DIC->database()->query("SELECT * FROM usr_data WHERE id = ".$DIC->database()->quote($id, "integer"));
+
+        // $tpl->setContent($html);
+    }
+
+
+    ///COPY PASTE
+    /**
+     * @inheritDoc
+     */
+    public function getRepositoryObjectChildren(
+        int $ref_id,
+        array $types,
+        int $max_depth = PHP_INT_MAX,
+        int $depth = 0
+    ): Generator {
+        if ($depth === $max_depth) {
+            return;
+        }
+
+        $container_types = $this->getContainerObjectTypes();
+        $combined_types = array_unique(array_merge($container_types, $types));
+
+        $children = $this->tree->getChildsByTypeFilter($ref_id, $combined_types);
+
+        foreach ($children as $container_or_candidate) {
+            $object_ref_id = (int) $container_or_candidate['ref_id'];
+
+            if (in_array($container_or_candidate['type'], $types, true)) {
+                $object = ilObjectFactory::getInstanceByRefId($object_ref_id, false);
+                if (false !== $object) {
+                    yield $object_ref_id => $object;
+                }
+
+                continue;
+            }
+
+            // object is a container object at this point.
+            yield from $this->getRepositoryObjectChildren($object_ref_id, $types, $max_depth, $depth + 1);
+        }
+    }
+
+    /** @var \ilTree */
+    protected $tree;
+    // ...
+    protected function getContainerObjectTypes(): array
+    {
+        return ['crs', 'cat', 'grp', 'fold', 'itgr'];
+    }
+
+
+    ////
+       /**
+     * Get file data
+     */
+    function getFileData()
+    {
+        //TODO 
+        // [...]
+        // https://github.com/ILIAS-eLearning/ILIAS/tree/release_8/Services/Database
+        $data[] = array("title" => "test_title", "nr" => "test_nr");         
+        // [...]
     }
 
     /**
@@ -217,7 +284,8 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $tpl = $pl->getTemplate("tpl.chat.html");
 
         $tpl->setVariable("CHAT_ID", "1234");
-        $this->getDataList();
+        $this->getRepositoryObjectChildren();
+        // $this->getDataList();
         $tpl->parseCurrentBlock();
         return $tpl->get();
         // show properties stores in the page

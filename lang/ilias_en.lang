@@ -5,7 +5,7 @@
 // Author: Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de> 
 //
 <!-- language file start -->
-cmd_insert#:#Insert Test Component
+cmd_insert#:#Insert Chat Client
 content_plugin_version#:#Content last edited with version
 edit_input_field#:#Edit Test Component
 config_interact_url#:#Interact URL
