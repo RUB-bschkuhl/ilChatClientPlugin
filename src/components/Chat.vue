@@ -1,4 +1,3 @@
-
 <template>
   <div ref="chatblockparent" id="app">
     <div v-if="this.detached" class="row d-flex justify-content-center">
@@ -26,11 +25,12 @@
         </ul>
         <div :class="this.activetab == 'chat' ? 'chat-container active' : 'chat-container'">
           <div class="info-box" v-if="infoDisplay">
-            <div class="userMessageContent" v-for="(message, index) in infoDisplayMessage" :key="index">Chunk {{ index + 1
-            }}:<br />
+            <div class="userMessageContent" v-for="(message, index) in infoDisplayMessage" :key="index">Chunk {{ index +
+      1
+              }}:<br />
               <hr><b>Page content:</b><br /> {{ message.page_content !== undefined ? message.page_content : "Empty"
               }}<br /><b>Metadata:</b><br /> {{
-  message.metadata !== undefined ? message.metadata : "Empty" }}
+      message.metadata !== undefined ? message.metadata : "Empty" }}
             </div>
             <div class="close-btn" @click="closeInfo()"></div>
           </div>
@@ -44,7 +44,7 @@
                     <button class='btn btn-primary clipboard' @click="copyToClipboard(message)"></button>
                   </div>
                   <div :class="message.from == 'user' ? 'userMessageContent' : 'chatbotMessageContent'">{{ message.data
-                  }}
+                    }}
                   </div>
 
                 </div>
@@ -91,7 +91,7 @@
                   <div class="input-group-append">
                     <!-- Typ: {{ file.mimetype }}<br> -->
                     <button class="btn btn-primary upload-button" id="uploadButton"
-                      @click="uploadFile(file.hash)">&#128193
+                      @click="uploadFile(file.id)">&#128193
                       &#8593</button>
                   </div>
                 </div>
@@ -112,9 +112,16 @@
 
 <script>
 // import loader from 'ChatbotLoader';
+import { onMounted } from 'vue';
 
 export default {
   name: 'ChatBot',
+  mounted() {
+    const bm = document.querySelector('#course_file_content');
+    if (bm && file_content) {
+      this.storedfiles = file_content;
+    }
+  },
   data() {
     return {
       currentMessage: '',
@@ -129,11 +136,9 @@ export default {
       infoDisplay: false,
       detached: false,
       interactapiurl: "Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/Services/interact.php",
-      uploadapiurl: "",
+      uploadapiurl: "Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/Services/upload.php",
       storedfiles: [],
     };
-  },
-  props: {
   },
   methods: {
     openInfo(m) {
@@ -178,12 +183,12 @@ export default {
       }
     },
     //call php api with data
-    async uploadFile(hash) {
+    async uploadFile(id) {
       const formData = new URLSearchParams();
       this.uploading = true;
-      formData.append("filehash", hash);
+      formData.append("filehash", id);
       formData.append("uid", "1");
-
+      console.log(this.uploadapiurl);
       const response = await fetch(this.uploadapiurl, {
         method: "POST",
         headers: {
@@ -193,6 +198,7 @@ export default {
       });
       try {
         const text = await response.text();
+        console.log(text);
 
         if (response.ok != true || text == "false") {
           this.errorMessage = 'Error while fetching response, please try again later.';
@@ -310,7 +316,7 @@ class validationMsg {
 
 </script>
 
-<style scoped >
+<style scoped>
 @media only screen and (max-width: 767.98px) {
 
   .chatbox-chat-container .nav-tabs:not(.more-nav) .nav-item,

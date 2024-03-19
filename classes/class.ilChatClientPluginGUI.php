@@ -28,6 +28,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     protected ilCtrl $ctrl;
     protected ilGlobalTemplateInterface $tpl;
     protected ilChatClientPlugin $pl;
+    protected ilTree $tree;
 
     public function __construct()
     {
@@ -39,7 +40,8 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->lng = $DIC->language();
         $this->ctrl = $DIC->ctrl();
         $this->tpl = $DIC['tpl'];
-		$this->pl = ilChatClientPlugin::getInstance();
+        $this->pl = ilChatClientPlugin::getInstance();
+        $this->tree = $DIC->repositoryTree();
         // $this->pl = new ilChatClientPlugin();
     }
 
@@ -54,16 +56,17 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         // Get Files aus Kurs
 
 
-        
+
         // Upload ermöglichen, begrenzen auf bestimmte rollen
         $id = 1;
-        $result = $DIC->database()->query("SELECT * FROM usr_data WHERE id = ".$DIC->database()->quote($id, "integer"));
+        $result = $DIC->database()->query("SELECT * FROM usr_data WHERE id = " . $DIC->database()->quote($id, "integer"));
 
         // $tpl->setContent($html);
     }
 
 
     ///COPY PASTE
+
     /**
      * @inheritDoc
      */
@@ -79,29 +82,33 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         $container_types = $this->getContainerObjectTypes();
         $combined_types = array_unique(array_merge($container_types, $types));
-
         $children = $this->tree->getChildsByTypeFilter($ref_id, $combined_types);
 
         foreach ($children as $container_or_candidate) {
             $object_ref_id = (int) $container_or_candidate['ref_id'];
-
             if (in_array($container_or_candidate['type'], $types, true)) {
-                $object = ilObjectFactory::getInstanceByRefId($object_ref_id, false);
+                // $files = $this->tree->getChildsByTypeFilter($object_ref_id, ['file']);
+                $fileobject_ref_id = (int) $container_or_candidate['ref_id'];
+
+                $object = ilObjectFactory::getInstanceByRefId($fileobject_ref_id, false);
                 if (false !== $object) {
                     yield $object_ref_id => $object;
                 }
+                // foreach ($files as $file) {
+                //     $fileobject_ref_id = (int) $file['ref_id'];
 
-                continue;
+                //     $object = ilObjectFactory::getInstanceByRefId($fileobject_ref_id, false);
+                //     if (false !== $object) {
+                //         yield $object_ref_id => $object;
+                //     }
+                // }
+
             }
-
             // object is a container object at this point.
             yield from $this->getRepositoryObjectChildren($object_ref_id, $types, $max_depth, $depth + 1);
         }
     }
 
-    /** @var \ilTree */
-    protected $tree;
-    // ...
     protected function getContainerObjectTypes(): array
     {
         return ['crs', 'cat', 'grp', 'fold', 'itgr'];
@@ -109,7 +116,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
 
     ////
-       /**
+    /**
      * Get file data
      */
     function getFileData()
@@ -117,7 +124,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         //TODO 
         // [...]
         // https://github.com/ILIAS-eLearning/ILIAS/tree/release_8/Services/Database
-        $data[] = array("title" => "test_title", "nr" => "test_nr");         
+        $data[] = array("title" => "test_title", "nr" => "test_nr");
         // [...]
     }
 
@@ -279,58 +286,64 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     {
         $pl = $this->getPlugin();
 
-        $display = array_merge($a_properties, $this->getPageInfo());
-
         $tpl = $pl->getTemplate("tpl.chat.html");
 
-        $tpl->setVariable("CHAT_ID", "1234");
-        $this->getRepositoryObjectChildren();
-        // $this->getDataList();
+        $course_id = $this->getParentCourseId();
+        $course_file_array = $this->getCourseFiles($course_id);
+        $file_refs = $this->getFileRefs($course_file_array);
+        $course_file_array_json = json_encode($file_refs);
+
+        $tpl->setVariable('file_content', $course_file_array_json);
         $tpl->parseCurrentBlock();
-        return $tpl->get();
-        // show properties stores in the page
-        // $html = '<pre>' . print_r($display, true);
 
-        // // show additional data
-        // if (!empty($a_properties['additional_data_id'])) {
-        //     $data = $pl->getData($a_properties['additional_data_id']);
-        //     $html .= 'Data: ' . $data . "\n";
-        // }
-
-        // // show uploaded file
-        // if (!empty($a_properties['page_file'])) {
-        //     try {
-        //         $fileObj = new ilObjFile($a_properties['page_file'], false);
-
-        //         // security
-        //         $_SESSION[__CLASS__]['allowedFiles'][$fileObj->getId()] = true;
-
-        //         $this->ctrl->setParameter($this, 'id', $fileObj->getId());
-        //         $url = $this->ctrl->getLinkTargetByClass(array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
-        //             'downloadFile');
-        //         $title = $fileObj->getPresentationTitle();
-
-        //     } catch (Exception $e) {
-        //         $url = "";
-        //         $title = $e->getMessage();
-        //     }
-
-        //     $html .= 'File: <a href="' . $url . '">' . $title . '</a>' . "\n";
-        // }
-
-        // // Show listened event
-        // if ($event = ($_SESSION['excpc_listened_event'] ?? null)) {
-        //     $html .= "\n";
-        //     $html .= 'Last Auth Event: ' . ilDatePresentation::formatDate(new ilDateTime($event['time'], IL_CAL_UNIX));
-        //     $html .= ' ' . $event['event'];
-        // }
-
-        // $html .= '</pre>';
+        return $tpl->get() . $course_file_array_json;
     }
 
-    //TODO
-    function getCourseFiles(): void
+    /**
+     * @param array<ilObjFile> $fileObjs
+     */
+    function getFileRefs($fileObjs): array
     {
+        // generate anchors for files
+        $objRefs = [];
+
+        if (!empty($fileObjs)) {
+            foreach ($fileObjs as $fileObj) {
+                // security
+                $this->ctrl->setParameter($this, 'id', $fileObj->getId());
+                $url = $this->ctrl->getLinkTargetByClass(
+                    array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
+                    'downloadFile'
+                );
+
+                $content_file = new stdClass;
+                $content_file->filename = $fileObj->getPresentationTitle();
+                $content_file->mimetype = $fileObj->getFileType();
+                $content_file->id = $fileObj->getId();
+
+                array_push($objRefs, $content_file);
+            }
+        }
+        return $objRefs;
+    }
+
+    function getParentCourseId(): int
+    {
+        $node_id = $_GET['ref_id'];
+        $crs_ref_id = $this->tree->checkForParentType($node_id, "crs");
+
+        return $crs_ref_id;
+    }
+
+    function getCourseFiles($course_id): array
+    {
+        $files = $this->getRepositoryObjectChildren($course_id, ['file']);
+        $stored_files = [];
+
+        foreach ($files as $file) {
+            $stored_files[] = $file;
+        }
+        return $stored_files;
     }
 
     /**
@@ -339,24 +352,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     function downloadFile(): void
     {
         $file_id = (int) $_GET['id'];
-        if ($_SESSION[__CLASS__]['allowedFiles'][$file_id]) {
-            $fileObj = new ilObjFile($file_id, false);
-            $fileObj->sendFile();
-        } else {
-            throw new ilException('not allowed');
-        }
-    }
-
-    /**
-     * Get information about the page that embeds the component
-     * @return    array    key => value
-     */
-    public function getPageInfo(): array
-    {
-        return array(
-            'page_id' => $this->plugin->getPageId(),
-            'parent_id' => $this->plugin->getParentId(),
-            'parent_type' => $this->plugin->getParentType()
-        );
+        $fileObj = new ilObjFile($file_id, false);
+        $fileObj->sendFile();
     }
 }

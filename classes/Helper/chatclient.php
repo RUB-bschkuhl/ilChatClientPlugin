@@ -1,46 +1,46 @@
 
 <?php
 
-class chatclient
+/*
+ * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
+ */
+
+class Chatclient
 {
-    private $url;
+    private ilChatClientPlugin $pl;
+    private $interact_url;
+    private $upload_url;
 
     public function __construct()
     {
+
+        $this->pl = ilChatClientPlugin::getInstance();
+        $this->interact_url = $this->pl::getValue("interact_url");
+        $this->upload_url =$this->pl::getValue("upload_url");
+        
         //return error apiurl not set
         // try {
-        $chaturl = ""; //get_config('block_rub_chatbot_settings', 'apiurl');
-        if (!$chaturl) {
-            // throw new moodle_exception('apiurlnotset', 'block_rub_chatbot');
+        $chaturl = ""; 
+        if (!$this->interact_url) {
+            //TODO
         }
-        $this->url = $chaturl;
-        // } catch (moodle_exception $e) {
-        //     echo ($e->getMessage());
-        //     die();
-        // }
-    }
-
-    public function get_interact_url()
-    {
-        return $this->url . '/interact';
-    }
-
-    public function get_upload_url()
-    {
-        return $this->url . '/upload';
+        if (!$this->upload_url) {
+            //TODO
+        }
     }
 
     //function to make HTTP request using curl
-    public function curl_interact($url, $data)
+    public function curl_interact($data)
     {
-        $url = 'https://oc-worker02-stage.ruhr-uni-bochum.de/api/LLM/ConversationChat';
+        // $url = 'https://oc-worker02-stage.ruhr-uni-bochum.de/api/LLM/ConversationChat';
+        $url = $this->interact_url;
 
         $headers = array(
             "Content-Type:application/json"
         );
 
         $curl = curl_init();
-        //TODO HTTPS,VERIFYPEERS ?
+
         curl_setopt($curl, CURLOPT_URL, $url);
         curl_setopt($curl, CURLOPT_POST, true);
         curl_setopt($curl, CURLOPT_POSTFIELDS, json_encode($data));
@@ -57,13 +57,15 @@ class chatclient
     }
 
     //function to upload file via curl
-    public function curl_upload_file($url, $file, $headers = null)
+    public function curl_upload_file($file, $headers = null)
     {
         $file_to_upload = $this->get_file_from_hash($file['filehash']);
         if ($file_to_upload == false) {
             return false;
         }
-        $url = 'http://host.docker.internal:5003/upload';
+        // $url = 'http://host.docker.internal:5003/upload';
+        $url = $this->upload_url;
+
         $mcurl = new curl();
         // todo: implement curl_multi für bulk 
 

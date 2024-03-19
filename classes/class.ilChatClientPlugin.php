@@ -23,6 +23,7 @@
 class ilChatClientPlugin extends ilPageComponentPlugin
 {
     private static $instance;
+
     const PLUGIN_NAME = 'ChatClient';
     const TABLE_NAME = "excpc_data";
     const CTYPE = 'Services';
@@ -34,6 +35,7 @@ class ilChatClientPlugin extends ilPageComponentPlugin
     {
         global $DIC;
         $this->db = $DIC->database();
+        
         parent::__construct($this->db, $DIC["component.repository"], self::PLUGIN_ID);
     }
 
