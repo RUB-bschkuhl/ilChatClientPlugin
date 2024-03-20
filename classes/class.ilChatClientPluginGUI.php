@@ -22,6 +22,7 @@
  * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilPCPluggedGUI
  * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilUIPluginRouterGUI
  */
+
 class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 {
     protected ilLanguage $lng;
@@ -42,30 +43,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $this->tpl = $DIC['tpl'];
         $this->pl = ilChatClientPlugin::getInstance();
         $this->tree = $DIC->repositoryTree();
-        // $this->pl = new ilChatClientPlugin();
     }
-
-    /**
-     * Show a data table
-     */
-    function getDataList(): void
-    {
-        global $tpl, $DIC;
-        // TODO ohne TableGUI ......
-        // https://docu.ilias.de/ilias.php?baseClass=illmpresentationgui&cmd=layout&ref_id=42&obj_id=27234
-        // Get Files aus Kurs
-
-
-
-        // Upload ermöglichen, begrenzen auf bestimmte rollen
-        $id = 1;
-        $result = $DIC->database()->query("SELECT * FROM usr_data WHERE id = " . $DIC->database()->quote($id, "integer"));
-
-        // $tpl->setContent($html);
-    }
-
-
-    ///COPY PASTE
 
     /**
      * @inheritDoc
@@ -86,23 +64,14 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         foreach ($children as $container_or_candidate) {
             $object_ref_id = (int) $container_or_candidate['ref_id'];
+            // object is file
             if (in_array($container_or_candidate['type'], $types, true)) {
-                // $files = $this->tree->getChildsByTypeFilter($object_ref_id, ['file']);
                 $fileobject_ref_id = (int) $container_or_candidate['ref_id'];
 
                 $object = ilObjectFactory::getInstanceByRefId($fileobject_ref_id, false);
                 if (false !== $object) {
                     yield $object_ref_id => $object;
                 }
-                // foreach ($files as $file) {
-                //     $fileobject_ref_id = (int) $file['ref_id'];
-
-                //     $object = ilObjectFactory::getInstanceByRefId($fileobject_ref_id, false);
-                //     if (false !== $object) {
-                //         yield $object_ref_id => $object;
-                //     }
-                // }
-
             }
             // object is a container object at this point.
             yield from $this->getRepositoryObjectChildren($object_ref_id, $types, $max_depth, $depth + 1);
@@ -112,20 +81,6 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     protected function getContainerObjectTypes(): array
     {
         return ['crs', 'cat', 'grp', 'fold', 'itgr'];
-    }
-
-
-    ////
-    /**
-     * Get file data
-     */
-    function getFileData()
-    {
-        //TODO 
-        // [...]
-        // https://github.com/ILIAS-eLearning/ILIAS/tree/release_8/Services/Database
-        $data[] = array("title" => "test_title", "nr" => "test_nr");
-        // [...]
     }
 
     /**
@@ -296,7 +251,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $tpl->setVariable('file_content', $course_file_array_json);
         $tpl->parseCurrentBlock();
 
-        return $tpl->get() . $course_file_array_json;
+        return $tpl->get();
     }
 
     /**
@@ -309,7 +264,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         if (!empty($fileObjs)) {
             foreach ($fileObjs as $fileObj) {
-                // security
+                // TODO security
                 $this->ctrl->setParameter($this, 'id', $fileObj->getId());
                 $url = $this->ctrl->getLinkTargetByClass(
                     array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),

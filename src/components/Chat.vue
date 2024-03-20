@@ -6,7 +6,7 @@
     </div>
     <div class="chatblockwrapper" id="movable-chat" :class="this.detached ? 'chatbox-chat-container-detached' : ''">
       <div class="chatbox-chat-container">
-        <!-- <loader :active="this.uploading"></loader> -->
+        <loader :active="this.uploading"></loader>
         <!-- <div class="detach-btn" @click="this.toggleDetach()"></div> -->
         <ul class="nav nav-tabs" id="chat-tabs" role="tablist">
           <li class="nav-item" role="presentation">
@@ -111,7 +111,7 @@
 </template>
 
 <script>
-// import loader from 'ChatbotLoader';
+import * as loader from './ChatbotLoader';
 import { onMounted } from 'vue';
 
 export default {
@@ -304,7 +304,7 @@ export default {
       this.last_message_from_rub_chat = last_message.from == 'RUB-GPT' ? true : false;
     }
   },
-  // modules: { loader }
+  modules: { loader }
 };
 
 class validationMsg {

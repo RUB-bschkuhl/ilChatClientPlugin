@@ -18,21 +18,17 @@ class Chatclient
         $this->interact_url = $this->pl::getValue("interact_url");
         $this->upload_url =$this->pl::getValue("upload_url");
         
-        //return error apiurl not set
-        // try {
-        $chaturl = ""; 
         if (!$this->interact_url) {
-            //TODO
+            //TODO warn
         }
         if (!$this->upload_url) {
-            //TODO
+            //TODO warn
         }
     }
 
     //function to make HTTP request using curl
     public function curl_interact($data)
     {
-        // $url = 'https://oc-worker02-stage.ruhr-uni-bochum.de/api/LLM/ConversationChat';
         $url = $this->interact_url;
 
         $headers = array(
@@ -63,26 +59,23 @@ class Chatclient
         if ($file_to_upload == false) {
             return false;
         }
-        // $url = 'http://host.docker.internal:5003/upload';
         $url = $this->upload_url;
 
-        $mcurl = new curl();
+        $curl = new curl();
         // todo: implement curl_multi für bulk 
 
-        $mcurl->setHeader(array("Content-Type: multipart/form-data"));
-        $response =  $mcurl->post($url, ["file" => $file_to_upload, "cid" => "1", "uid" => "1"]);
+        $curl->setHeader(array("Content-Type: multipart/form-data"));
+        $response =  $curl->post($url, ["file" => $file_to_upload, "cid" => "1", "uid" => "1"]);
 
         if ($response != false) {
-            //TODO save hash to succesful uploads db to primitively prevent duplicate uploads
+            //TODO save hash to succesful uploads table to prevent duplicate uploads in a first effort
         }
         return $response;
     }
 
     public function get_file_from_hash($filehash)
     {
-        // $fs = get_file_storage();
-        // $filebyhash = $fs->get_file_by_hash($filehash);
-
-        // return $filebyhash;
+        //TODO security
+        return new ilObjFile($filehash, false);
     }
 }
