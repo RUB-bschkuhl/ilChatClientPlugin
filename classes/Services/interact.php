@@ -5,7 +5,9 @@
  * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
 
-require __DIR__ . '/../Helper/Chatclient.php';
+
+ //TODO 
+require __DIR__ . '/../class.ChatclientHelper.php';
 global $_POST;
 
 //TODO Security

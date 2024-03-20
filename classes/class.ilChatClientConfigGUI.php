@@ -66,7 +66,6 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
         }
     }
 
-
     /**
      *
      * @throws ilCtrlException
@@ -76,7 +75,6 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
         $this->dic->tabs()->addTab(self::TAB_CONFIGURATION, $this->pl->txt("config_configuration"), $this->dic->ctrl()
             ->getLinkTargetByClass(self::class, self::CMD_CONFIGURE));
     }
-
 
     /**
      * @return ilPropertyFormGUI

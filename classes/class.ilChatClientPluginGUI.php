@@ -23,6 +23,8 @@
  * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilUIPluginRouterGUI
  */
 
+ require __DIR__ . '/class.ChatclientHelper.php';
+
 class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 {
     protected ilLanguage $lng;
@@ -94,7 +96,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             default:
                 // perform valid commands
                 $cmd = $this->ctrl->getCmd();
-                if (in_array($cmd, array("create", "save", "edit", "update", "cancel", "downloadFile"))) {
+                if (in_array($cmd, array("create", "save", "edit", "update", "cancel", "downloadFile", "upload", "prompt"))) {
                     $this->$cmd();
                 }
                 break;
@@ -249,6 +251,8 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $course_file_array_json = json_encode($file_refs);
 
         $tpl->setVariable('file_content', $course_file_array_json);
+        $tpl->setVariable('prompt_url', json_encode($this->getPromptUrl()));
+
         $tpl->parseCurrentBlock();
 
         return $tpl->get();
@@ -260,21 +264,18 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     function getFileRefs($fileObjs): array
     {
         // generate anchors for files
-        $objRefs = [];
+        $objRefs = [];  
 
         if (!empty($fileObjs)) {
             foreach ($fileObjs as $fileObj) {
                 // TODO security
-                $this->ctrl->setParameter($this, 'id', $fileObj->getId());
-                $url = $this->ctrl->getLinkTargetByClass(
-                    array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
-                    'downloadFile'
-                );
+                $url = $this->getUploadUrl($fileObj->getId());
 
                 $content_file = new stdClass;
                 $content_file->filename = $fileObj->getPresentationTitle();
                 $content_file->mimetype = $fileObj->getFileType();
                 $content_file->id = $fileObj->getId();
+                $content_file->url = $url;
 
                 array_push($objRefs, $content_file);
             }
@@ -309,5 +310,67 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $file_id = (int) $_GET['id'];
         $fileObj = new ilObjFile($file_id, false);
         $fileObj->sendFile();
+    }
+    /**
+     * upload file of file lists
+     */
+    function upload($id): void
+    {
+        // $file_id = (int) $_GET['id'];
+        // $fileObj = new ilObjFile($file_id, false);
+        // $fileObj->sendFile();
+
+
+        global $_POST;
+
+        //TODO Security
+
+        $client = new ChatclientHelper();
+        $resp = $client->curl_upload_file($_POST);
+
+        if ($resp == false) {
+            echo ("false");
+            die();
+        }
+        echo ($resp);
+    }
+
+    /**
+     * send prompt to chat api
+     */
+    function prompt(): void
+    {
+        global $_POST;
+
+        //TODO Security
+
+        $client = new ChatclientHelper();
+        $resp = $client->curl_interact($_POST);
+
+        if ($resp == false) {
+            echo ("false");
+            die();
+        }
+        header('Content-type: application/json');
+        echo json_encode($resp);
+    }
+
+    function getPromptUrl(): string
+    {
+        $url = $this->ctrl->getLinkTargetByClass(
+            array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
+            'prompt'
+        );
+        return $url;
+    }
+
+    function getUploadUrl($id): string
+    {
+        $this->ctrl->setParameter($this, 'id', $id);
+        $url = $this->ctrl->getLinkTargetByClass(
+            array('ilUIPluginRouterGUI', 'ilChatClientPluginGUI'),
+            'upload'
+        );
+        return $url;
     }
 }

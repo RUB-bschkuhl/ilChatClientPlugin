@@ -28,7 +28,7 @@
             <div class="userMessageContent" v-for="(message, index) in infoDisplayMessage" :key="index">Chunk {{ index +
       1
               }}:<br />
-              <hr><b>Page content:</b><br /> {{ message.page_content !== undefined ? message.page_content : "Empty"
+              <hr><b>Page content:</b><br /> {{ message.pagecontent !== undefined ? message.pagecontent : "Empty"
               }}<br /><b>Metadata:</b><br /> {{
       message.metadata !== undefined ? message.metadata : "Empty" }}
             </div>
@@ -39,7 +39,7 @@
               <div :class="message.from == 'user' ? 'messageFromUser' : 'messageFromChatbot'">
                 <div :class="message.from == 'user' ? 'userMessageWrapper' : 'chatbotMessageWrapper'">
                   <div v-if="message.from != 'user'" class="info-button-row">
-                    <button v-if="message.sourcedocs?.length > 0" class='btn btn-primary rag-info'
+                    <button v-if="message.SourceDocuments?.length > 0" class='btn btn-primary rag-info'
                       @click="openInfo(message)"></button>
                     <button class='btn btn-primary clipboard' @click="copyToClipboard(message)"></button>
                   </div>
@@ -91,7 +91,7 @@
                   <div class="input-group-append">
                     <!-- Typ: {{ file.mimetype }}<br> -->
                     <button class="btn btn-primary upload-button" id="uploadButton"
-                      @click="uploadFile(file.id)">&#128193
+                      @click="uploadFile(file.id, file.url)">&#128193
                       &#8593</button>
                   </div>
                 </div>
@@ -112,14 +112,14 @@
 
 <script>
 import * as loader from './ChatbotLoader';
-import { onMounted } from 'vue';
 
 export default {
   name: 'ChatBot',
   mounted() {
-    const bm = document.querySelector('#course_file_content');
-    if (bm && file_content) {
+    const bm = document.querySelector('#additional_api_data');
+    if (bm && file_content && prompt_url) {
       this.storedfiles = file_content;
+      this.interactapiurl = prompt_url;
     }
   },
   data() {
@@ -135,14 +135,13 @@ export default {
       infoDisplayMessage: null,
       infoDisplay: false,
       detached: false,
-      interactapiurl: "Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/Services/interact.php",
-      uploadapiurl: "Customizing/global/plugins/Services/COPage/PageComponent/ChatClient/classes/Services/upload.php",
+      interactapiurl: "",
       storedfiles: [],
     };
   },
   methods: {
     openInfo(m) {
-      this.infoDisplayMessage = m.sourcedocs;
+      this.infoDisplayMessage = m.SourceDocuments;
       this.infoDisplay = true;
     },
     closeInfo() {
@@ -183,13 +182,21 @@ export default {
       }
     },
     //call php api with data
-    async uploadFile(id) {
-      const formData = new URLSearchParams();
+    async uploadFile(id, url) {
       this.uploading = true;
-      formData.append("filehash", id);
-      formData.append("uid", "1");
-      console.log(this.uploadapiurl);
-      const response = await fetch(this.uploadapiurl, {
+
+      let promptRequest = new Object();
+      promptRequest.userid = "1"; //TODO
+      promptRequest.courseid = "101"; //TODO
+      promptRequest.filehash = id;
+
+      const formData = new URLSearchParams();
+      Object.keys(promptRequest).forEach(key => {
+        const value = promptRequest[key];
+        formData.append(key, promptRequest[key]);
+      });
+
+      const response = await fetch(url, {
         method: "POST",
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',
@@ -232,10 +239,10 @@ export default {
 
       let promptRequest = new Object();
       promptRequest.prompt = message;
-      promptRequest.user_id = "1";
-      promptRequest.course_id = "1";
+      promptRequest.userid = "1";
+      promptRequest.courseid = "101";
       promptRequest.response = "";
-      promptRequest.sourcedocs = "";
+      promptRequest.SourceDocuments = "";
 
       let responseData = await this.postData(this.interactapiurl, promptRequest);
       if (responseData == "false" || responseData == null || responseData === undefined || responseData.response === undefined) {
@@ -244,8 +251,8 @@ export default {
         this.messages.push({
           from: 'RUB-GPT',
           data: responseData.response,
-          sourcedocs: responseData.sourcedocs
-          //  sourcedocs:  [{ page_content: "page_content1", metadata: "metadata1" }, { page_content: "page_content2", metadata: "metadata2" }, { page_content: "page_content3", metadata: "m3" }, { page_content: "p4", metadata: "m4" }]
+          SourceDocuments: responseData.SourceDocuments
+          //  SourceDocuments:  [{ pagecontent: "pagecontent1", metadata: "metadata1" }, { pagecontent: "pagecontent2", metadata: "metadata2" }, { pagecontent: "pagecontent3", metadata: "m3" }, { pagecontent: "p4", metadata: "m4" }]
         });
       }
       this.loading = false;
