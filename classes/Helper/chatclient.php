@@ -65,7 +65,7 @@ class Chatclient
         // todo: implement curl_multi für bulk 
 
         $curl->setHeader(array("Content-Type: multipart/form-data"));
-        $response =  $curl->post($url, ["file" => $file_to_upload, "cid" => "1", "uid" => "1"]);
+        $response =  $curl->post($url, ["file" => $file_to_upload, "course_id" => "1", "user_id" => "1"]);
 
         if ($response != false) {
             //TODO save hash to succesful uploads table to prevent duplicate uploads in a first effort

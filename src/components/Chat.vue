@@ -232,8 +232,8 @@ export default {
 
       let promptRequest = new Object();
       promptRequest.prompt = message;
-      promptRequest.uid = "1";
-      promptRequest.cid = "1";
+      promptRequest.user_id = "1";
+      promptRequest.course_id = "1";
       promptRequest.response = "";
       promptRequest.sourcedocs = "";
 
