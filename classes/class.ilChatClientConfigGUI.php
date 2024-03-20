@@ -38,7 +38,6 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
         $this->tpl = $DIC['tpl'];
     }
 
-
     /**
      * @inheritDoc
      * @throws ilCtrlException
@@ -84,19 +83,23 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
         $this->dic->tabs()->activateTab(self::TAB_CONFIGURATION);
         $confForm = new ilPropertyFormGUI();
         $confForm->setFormAction($this->dic->ctrl()->getFormAction($this));
-        $input = new ilUriInputGUI($this->pl->txt('config_interact_url'), "interact_url");
-        $input->setInfo($this->pl->txt('config_interact_url_info'));
+        $input = new ilUriInputGUI($this->pl->txt('config_prompt_url'), "prompt_url");
+        $input->setInfo($this->pl->txt('config_prompt_url_info'));
         $confForm->addItem($input);
 
         $input = new ilUriInputGUI($this->pl->txt('config_upload_url'), "upload_url");
         $input->setInfo($this->pl->txt('config_upload_url_info'));
         $confForm->addItem($input);
+
+        $input = new ilTextInputGUI($this->pl->txt('config_authkey'), "authkey");
+        $input->setInfo($this->pl->txt('config_authkey_info'));
+        $confForm->addItem($input);
+
         $confForm->addCommandButton(self::CMD_UPDATE_CONFIGURE, $this->pl->txt('config_save'));
         $this->tpl->setContent($confForm->getHTML());
 
         return $confForm;
     }
-
 
     /**
      *
@@ -105,12 +108,12 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
     {
         $form = $this->getConfigForm();
         $values = array();
-        $values["interact_url"] = $this->pl::getValue("interact_url");
+        $values["prompt_url"] = $this->pl::getValue("prompt_url");
         $values["upload_url"] = $this->pl::getValue("upload_url");
+        $values["authkey"] = $this->pl::getValue("authkey");
         $form->setValuesByArray($values);
         $this->tpl->setContent($form->getHTML());
     }
-
 
     /**
      *
@@ -122,8 +125,9 @@ class ilChatClientConfigGUI extends ilPluginConfigGUI
 
         $form = $this->getConfigForm();
         if ($form->checkInput()) {
-            $this->pl::setValue("interact_url", $form->getInput("interact_url"), "text");
+            $this->pl::setValue("prompt_url", $form->getInput("prompt_url"), "text");
             $this->pl::setValue("upload_url", $form->getInput("upload_url"), "text");
+            $this->pl::setValue("authkey", $form->getInput("authkey"), "text");
             $this->dic->ui()->mainTemplate()->setOnScreenMessage('success', $this->pl->txt('config_configuration_saved'), true);
         }
 

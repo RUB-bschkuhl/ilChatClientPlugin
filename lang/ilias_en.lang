@@ -8,10 +8,12 @@
 cmd_insert#:#Insert Chat Client
 content_plugin_version#:#Content last edited with version
 edit_input_field#:#Edit Test Component
-config_interact_url#:#Interact URL
+config_prompt_url#:#Prompt URL
 config_upload_url#:#Upload URL
-config_interact_url_info#:#Update Interact URL
+config_prompt_url_info#:#Update Prompt URL
 config_upload_url_info#:#Update Upload URL
+config_authkey#:#Authentication Key
+config_authkey_info#:#Update Authentication Key
 config_configuration#:#Konfiguration
 config_configuration_saved#:#Speichern
 config_save#:#Speichern

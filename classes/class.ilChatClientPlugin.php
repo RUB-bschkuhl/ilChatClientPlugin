@@ -21,8 +21,6 @@
  * @author Bastian Schmidt-Kuhl <bastian.schmidt-kuhl@ruhr-uni-bochum.de>
  */
 
-// include_once('./Services/COPage/classes/class.ilPageComponentPlugin.php');
-
 class ilChatClientPlugin extends ilPageComponentPlugin
 {
     private static $instance;

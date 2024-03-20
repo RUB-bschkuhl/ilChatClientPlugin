@@ -23,7 +23,7 @@
  * @ilCtrl_isCalledBy ilChatClientPluginGUI: ilUIPluginRouterGUI
  */
 
- require __DIR__ . '/class.ChatclientHelper.php';
+require_once __DIR__ . '/class.ChatclientHelper.php';
 
 class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 {
@@ -66,7 +66,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
         foreach ($children as $container_or_candidate) {
             $object_ref_id = (int) $container_or_candidate['ref_id'];
-            // object is file
+            // object is of filtered type
             if (in_array($container_or_candidate['type'], $types, true)) {
                 $fileobject_ref_id = (int) $container_or_candidate['ref_id'];
 
@@ -96,7 +96,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             default:
                 // perform valid commands
                 $cmd = $this->ctrl->getCmd();
-                if (in_array($cmd, array("create", "save", "edit", "update", "cancel", "downloadFile", "upload", "prompt"))) {
+                if (in_array($cmd, array("create", "save", "edit", "update", "cancel", "upload", "prompt"))) {
                     $this->$cmd();
                 }
                 break;
@@ -163,15 +163,20 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
         $page_value->setRequired(true);
         $form->addItem($page_value);
 
-        $interacturl = $this->pl::getValue("interact_url");
+        $interacturl = $this->pl::getValue("prompt_url");
         $uploadurl = $this->pl::getValue("upload_url");
+        $authkey = $this->pl::getValue("authkey");
 
-        $info = new ilNonEditableValueGUI($this->lng->txt("interact_url"));
+        $info = new ilNonEditableValueGUI($this->lng->txt("prompt_url"));
         $info->setValue($interacturl);
         $form->addItem($info);
 
         $info = new ilNonEditableValueGUI($this->lng->txt("upload_url"));
         $info->setValue($uploadurl);
+        $form->addItem($info);
+
+        $info = new ilNonEditableValueGUI($this->lng->txt("authkey"));
+        $info->setValue($authkey);
         $form->addItem($info);
 
         // page info values
@@ -206,15 +211,6 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
 
             // value saved in the page
             $properties['page_value'] = $form->getInput('page_value');
-
-            // example save input
-            // $id = $properties['upload_url'] ?? null;
-            // if (empty($id)) {
-            //     $id = $this->plugin->saveData($form->getInput('upload_url'));
-            //     $properties['upload_url'] = $id;
-            // } else {
-            //     $this->plugin->updateData($id, $form->getInput('upload_url'));
-            // }
 
             if ($a_create) {
                 return $this->createElement($properties);
@@ -264,7 +260,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     function getFileRefs($fileObjs): array
     {
         // generate anchors for files
-        $objRefs = [];  
+        $objRefs = [];
 
         if (!empty($fileObjs)) {
             foreach ($fileObjs as $fileObj) {
@@ -303,24 +299,10 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
     }
 
     /**
-     * download file of file lists
-     */
-    function downloadFile(): void
-    {
-        $file_id = (int) $_GET['id'];
-        $fileObj = new ilObjFile($file_id, false);
-        $fileObj->sendFile();
-    }
-    /**
      * upload file of file lists
      */
-    function upload($id): void
+    function upload(): void
     {
-        // $file_id = (int) $_GET['id'];
-        // $fileObj = new ilObjFile($file_id, false);
-        // $fileObj->sendFile();
-
-
         global $_POST;
 
         //TODO Security
@@ -332,6 +314,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             echo ("false");
             die();
         }
+
         echo ($resp);
     }
 
@@ -351,6 +334,7 @@ class ilChatClientPluginGUI extends ilPageComponentPluginGUI
             echo ("false");
             die();
         }
+
         header('Content-type: application/json');
         echo json_encode($resp);
     }

@@ -25,12 +25,17 @@
         $ilDB->addPrimaryKey('excpc_data', ['name']);
         
         $ilDB->insert('excpc_data', [
-            'name' => ['text', 'interact_url'],
+            'name' => ['text', 'prompt_url'],
             'value' => ['text', null]
         ]);
 
         $ilDB->insert('excpc_data', [
             'name' => ['text', 'upload_url'],
+            'value' => ['text', null]
+        ]);
+
+        $ilDB->insert('excpc_data', [
+            'name' => ['text', 'authkey'],
             'value' => ['text', null]
         ]);
     }
